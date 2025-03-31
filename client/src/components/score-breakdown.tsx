@@ -46,13 +46,16 @@ const ScoreBreakdown: React.FC<ScoreBreakdownProps> = ({ metaTags, socialMedia, 
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">
       {/* Core Meta Tags */}
-      <Card>
-        <CardContent className="p-5">
+      <Card className="border-neutral-200 shadow-sm">
+        <CardContent className="p-4 sm:p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-medium text-neutral-800">Core Meta Tags</h3>
-            <Badge variant={getScoreBadgeVariant(metaTags.score) as any}>
+            <Badge 
+              variant={getScoreBadgeVariant(metaTags.score) as any}
+              className="text-xs px-2 py-1"
+            >
               {metaTags.score}/100
             </Badge>
           </div>
@@ -64,11 +67,11 @@ const ScoreBreakdown: React.FC<ScoreBreakdownProps> = ({ metaTags, socialMedia, 
                     {getStatusIcon(tag.status)}
                   </span>
                 </div>
-                <div className="ml-2">
+                <div className="ml-2 overflow-hidden">
                   <p className="text-sm font-medium text-neutral-800">{tag.name}</p>
-                  <p className="text-xs text-neutral-500 max-w-xs truncate">
-                    <span className="font-mono">{tag.value || 'Missing'}</span>
-                    {tag.message && <span className="block text-xs italic">{tag.message}</span>}
+                  <p className="text-xs text-neutral-500 break-words">
+                    <span className="font-mono inline-block max-w-full truncate">{tag.value || 'Missing'}</span>
+                    {tag.message && <span className="block text-xs italic mt-1">{tag.message}</span>}
                   </p>
                 </div>
               </li>
@@ -78,11 +81,14 @@ const ScoreBreakdown: React.FC<ScoreBreakdownProps> = ({ metaTags, socialMedia, 
       </Card>
       
       {/* Social Media Tags */}
-      <Card>
-        <CardContent className="p-5">
+      <Card className="border-neutral-200 shadow-sm">
+        <CardContent className="p-4 sm:p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-medium text-neutral-800">Social Media Tags</h3>
-            <Badge variant={getScoreBadgeVariant(socialMedia.score) as any}>
+            <Badge 
+              variant={getScoreBadgeVariant(socialMedia.score) as any}
+              className="text-xs px-2 py-1"
+            >
               {socialMedia.score}/100
             </Badge>
           </div>
@@ -94,11 +100,11 @@ const ScoreBreakdown: React.FC<ScoreBreakdownProps> = ({ metaTags, socialMedia, 
                     {getStatusIcon(tag.status)}
                   </span>
                 </div>
-                <div className="ml-2">
+                <div className="ml-2 overflow-hidden">
                   <p className="text-sm font-medium text-neutral-800">{tag.name}</p>
-                  <p className="text-xs text-neutral-500 max-w-xs truncate">
-                    <span className="font-mono">{tag.value || 'Missing'}</span>
-                    {tag.message && <span className="block text-xs italic">{tag.message}</span>}
+                  <p className="text-xs text-neutral-500 break-words">
+                    <span className="font-mono inline-block max-w-full truncate">{tag.value || 'Missing'}</span>
+                    {tag.message && <span className="block text-xs italic mt-1">{tag.message}</span>}
                   </p>
                 </div>
               </li>
@@ -108,11 +114,14 @@ const ScoreBreakdown: React.FC<ScoreBreakdownProps> = ({ metaTags, socialMedia, 
       </Card>
       
       {/* Technical SEO */}
-      <Card>
-        <CardContent className="p-5">
+      <Card className="border-neutral-200 shadow-sm">
+        <CardContent className="p-4 sm:p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-medium text-neutral-800">Technical SEO</h3>
-            <Badge variant={getScoreBadgeVariant(technicalSeo.score) as any}>
+            <Badge 
+              variant={getScoreBadgeVariant(technicalSeo.score) as any}
+              className="text-xs px-2 py-1"
+            >
               {technicalSeo.score}/100
             </Badge>
           </div>
@@ -124,11 +133,11 @@ const ScoreBreakdown: React.FC<ScoreBreakdownProps> = ({ metaTags, socialMedia, 
                     {getStatusIcon(tag.status)}
                   </span>
                 </div>
-                <div className="ml-2">
+                <div className="ml-2 overflow-hidden">
                   <p className="text-sm font-medium text-neutral-800">{tag.name}</p>
-                  <p className="text-xs text-neutral-500">
-                    <span className="font-mono">{tag.value || 'Missing'}</span>
-                    {tag.message && <span className="block text-xs italic">{tag.message}</span>}
+                  <p className="text-xs text-neutral-500 break-words">
+                    <span className="font-mono inline-block max-w-full truncate">{tag.value || 'Missing'}</span>
+                    {tag.message && <span className="block text-xs italic mt-1">{tag.message}</span>}
                   </p>
                 </div>
               </li>

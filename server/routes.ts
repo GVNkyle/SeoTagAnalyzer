@@ -13,7 +13,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { url } = req.body;
       
       if (!url) {
-        return res.status(400).json({ message: "URL is required" });
+        return res.status(400).json({ 
+          message: "URL is required",
+          userMessage: "Please enter a website URL to analyze" 
+        });
+      }
+      
+      // Basic URL validation
+      try {
+        if (!url.startsWith('http')) {
+          new URL(`https://${url}`);
+        } else {
+          new URL(url);
+        }
+      } catch (e) {
+        return res.status(400).json({ 
+          message: "Invalid URL format",
+          userMessage: "Please enter a valid website URL (e.g., example.com or https://example.com)" 
+        });
       }
       
       // Analyze the website
@@ -39,12 +56,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof ZodError) {
         return res.status(400).json({ 
           message: "Invalid analysis result format", 
-          errors: error.errors 
+          errors: error.errors,
+          userMessage: "The analysis format is invalid. Our team has been notified of this issue."
         });
       }
       
-      return res.status(500).json({ 
-        message: (error as Error).message || "An error occurred while analyzing the URL" 
+      // More specific user-friendly error messages
+      let userMessage = "An error occurred while analyzing the URL. Please try again.";
+      let statusCode = 500;
+      
+      const errorMessage = (error as Error).message || "";
+      
+      if (errorMessage.includes("Invalid URL format")) {
+        userMessage = "Please enter a valid website URL (e.g., example.com)";
+        statusCode = 400;
+      } else if (errorMessage.includes("Connection error") || errorMessage.includes("Failed to fetch")) {
+        userMessage = "Could not connect to the website. Please check the URL and try again.";
+        statusCode = 400;
+      } else if (errorMessage.includes("Request timeout")) {
+        userMessage = "The website took too long to respond. Please try again later.";
+        statusCode = 408;
+      } else if (errorMessage.includes("Received empty response")) {
+        userMessage = "The website returned an empty response. Please try another URL.";
+        statusCode = 400;
+      }
+      
+      return res.status(statusCode).json({ 
+        message: errorMessage, 
+        userMessage
       });
     }
   });

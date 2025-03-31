@@ -17,25 +17,56 @@ interface Recommendation {
 }
 
 export async function fetchWebsite(url: string): Promise<string> {
-  // Normalize URL to ensure it has http/https
-  if (!url.startsWith('http')) {
-    url = 'https://' + url;
-  }
-
+  // Validate and normalize URL
   try {
+    // Ensure URL has protocol
+    if (!url.startsWith('http')) {
+      url = 'https://' + url;
+    }
+    
+    // Basic URL validation
+    new URL(url);
+    
+    // Attempt to fetch with timeout and proper headers
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 seconds timeout
+    
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'SEO MetaScore Analyzer/1.0',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
       },
+      signal: controller.signal,
     });
-
+    
+    clearTimeout(timeoutId);
+    
     if (!response.ok) {
-      throw new Error(`Failed to fetch website: ${response.statusText}`);
+      throw new Error(`Failed to fetch website: ${response.status} ${response.statusText}`);
     }
-
-    return await response.text();
+    
+    const html = await response.text();
+    
+    // Check if we actually got HTML content
+    if (!html || html.trim().length === 0) {
+      throw new Error('Received empty response from website');
+    }
+    
+    return html;
   } catch (error) {
-    throw new Error(`Error fetching website: ${(error as Error).message}`);
+    console.error('Error fetching website:', error);
+    if (error instanceof Error) {
+      if (error.name === 'AbortError') {
+        throw new Error('Request timeout: Website took too long to respond');
+      } else if (error.message.includes('Failed to fetch')) {
+        throw new Error(`Connection error: Unable to access the website. Please check the URL and try again`);
+      } else if (error instanceof TypeError && error.message.includes('URL')) {
+        throw new Error(`Invalid URL format: ${url}`);
+      }
+      throw new Error(`Error fetching website: ${error.message}`);
+    }
+    throw new Error('Unknown error occurred while fetching the website');
   }
 }
 

@@ -53,28 +53,44 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({ recomme
   };
 
   return (
-    <Card>
-      <CardContent className="p-6">
+    <Card className="border-neutral-200 shadow-md">
+      <CardContent className="p-4 sm:p-6">
         <h3 className="text-lg font-medium text-neutral-800 mb-4">Recommendations for Improvement</h3>
-        <ul className="space-y-4">
+        <ul className="space-y-6">
           {recommendations.map((recommendation, index) => (
             <li 
               key={index} 
-              className={`flex items-start ${index < recommendations.length - 1 ? 'pb-4 border-b border-neutral-100' : ''}`}
+              className={`flex flex-col sm:flex-row gap-3 ${index < recommendations.length - 1 ? 'pb-6 border-b border-neutral-100' : ''}`}
             >
               <div className="flex-shrink-0 mt-0.5">
-                <span className={`material-icons ${getPriorityTextColor(recommendation.priority)}`}>
-                  {getPriorityIcon(recommendation.priority)}
-                </span>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                  recommendation.priority === 'high' ? 'bg-red-100' :
+                  recommendation.priority === 'medium' ? 'bg-amber-100' : 'bg-blue-100'
+                }`}>
+                  <span className={`material-icons text-xl ${getPriorityTextColor(recommendation.priority)}`}>
+                    {getPriorityIcon(recommendation.priority)}
+                  </span>
+                </div>
               </div>
-              <div className="ml-3">
-                <h4 className="text-base font-medium text-neutral-800">{recommendation.title}</h4>
-                <p className="text-sm text-neutral-600 mt-1">
+              <div className="flex-1">
+                <div className="flex items-center mb-1">
+                  <h4 className="text-base font-medium text-neutral-800">{recommendation.title}</h4>
+                  <span className={`ml-2 text-xs font-medium px-2 py-0.5 rounded-full ${
+                    recommendation.priority === 'high' ? 'bg-red-100 text-red-800' :
+                    recommendation.priority === 'medium' ? 'bg-amber-100 text-amber-800' : 
+                    'bg-blue-100 text-blue-800'
+                  }`}>
+                    {recommendation.priority === 'high' ? 'High priority' :
+                     recommendation.priority === 'medium' ? 'Medium priority' : 
+                     'Low priority'}
+                  </span>
+                </div>
+                <p className="text-sm text-neutral-600">
                   {recommendation.description}
                 </p>
                 {recommendation.code && (
-                  <div className="mt-2 p-3 bg-neutral-50 rounded-md font-mono">
-                    <code className="text-sm text-neutral-800 whitespace-pre-wrap break-all">
+                  <div className="mt-3 p-3 sm:p-4 bg-neutral-50 border border-neutral-200 rounded-md overflow-x-auto">
+                    <code className="text-xs sm:text-sm text-neutral-800 font-mono whitespace-pre-wrap break-all block">
                       {recommendation.code}
                     </code>
                   </div>

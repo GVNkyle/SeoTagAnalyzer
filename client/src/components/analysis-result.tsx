@@ -67,44 +67,52 @@ const AnalysisResult: React.FC<AnalysisResultProps> = ({ result }) => {
   ];
 
   // Get items for summary badges (max 5)
-  const summaryItems = [
-    { name: 'Title Tag', status: result.metaTags.items.find(i => i.name === 'Title')?.status || 'error' },
-    { name: 'Meta Description', status: result.metaTags.items.find(i => i.name === 'Description')?.status || 'error' },
+  const summaryItems: Array<{ name: string; status: 'success' | 'warning' | 'error' }> = [
+    { name: 'Title Tag', status: (result.metaTags.items.find(i => i.name === 'Title')?.status || 'error') as 'success' | 'warning' | 'error' },
+    { name: 'Meta Description', status: (result.metaTags.items.find(i => i.name === 'Description')?.status || 'error') as 'success' | 'warning' | 'error' },
     { name: 'Open Graph', status: result.socialMedia.items.some(i => i.name.startsWith('og:') && i.status === 'success') ? 'success' : 'error' },
     { name: 'Twitter Cards', status: result.socialMedia.items.some(i => i.name.startsWith('twitter:') && i.status === 'success') ? 'success' : 'warning' },
-    { name: 'Canonical URL', status: result.metaTags.items.find(i => i.name === 'Canonical URL')?.status || 'error' }
+    { name: 'Canonical URL', status: (result.metaTags.items.find(i => i.name === 'Canonical URL')?.status || 'error') as 'success' | 'warning' | 'error' }
   ];
 
   return (
     <div className="mb-8">
-      <Card className="mb-6">
-        <CardContent className="p-6 flex flex-col sm:flex-row items-start sm:items-center gap-6">
+      <Card className="mb-6 border-neutral-200 shadow-md">
+        <CardContent className="p-4 sm:p-6 flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
           <ScoreDisplay score={result.totalScore} rating={result.scoreRating} />
           
-          <div className="flex-grow">
-            <h2 className="text-xl font-semibold mb-1 text-neutral-800">SEO Score: {result.scoreRating}</h2>
-            <p className="text-neutral-600 mb-3">
-              Analyzed <span className="font-semibold">{result.url}</span> • Last check: <span>{result.analyzedAt}</span>
+          <div className="flex-grow text-center sm:text-left">
+            <h2 className="text-xl font-semibold mb-2 text-neutral-800">
+              SEO Score: <span className="text-primary-600">{result.scoreRating}</span>
+            </h2>
+            <p className="text-neutral-600 mb-3 text-sm sm:text-base">
+              Analyzed <span className="font-semibold">{result.url}</span> 
+              <br className="sm:hidden" /> 
+              <span className="hidden sm:inline"> • </span>
+              Last check: <span>{result.analyzedAt}</span>
             </p>
-            <div className="flex flex-wrap gap-2">
-              {summaryItems.map((item, index) => (
-                <Badge
-                  key={index}
-                  variant={getBadgeVariant(item.status) as any}
-                  className="flex items-center space-x-1"
-                >
-                  <span className="material-icons text-xs">{getStatusIcon(item.status)}</span>
-                  <span>{item.name}</span>
-                </Badge>
-              ))}
+            <div className="flex flex-wrap justify-center sm:justify-start gap-2">
+              {summaryItems.map((item, index) => {
+                const status = item.status as 'success' | 'warning' | 'error';
+                return (
+                  <Badge
+                    key={index}
+                    variant={getBadgeVariant(status) as any}
+                    className="flex items-center gap-1 px-2 py-1"
+                  >
+                    <span className="material-icons text-xs">{getStatusIcon(status)}</span>
+                    <span>{item.name}</span>
+                  </Badge>
+                );
+              })}
             </div>
           </div>
           
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 w-full sm:w-auto">
             <button 
               type="button"
               onClick={handleShareResults}
-              className="inline-flex items-center px-4 py-2 border border-neutral-300 shadow-sm text-sm font-medium rounded-md text-neutral-700 bg-white hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-neutral-300 shadow-sm text-sm font-medium rounded-md text-neutral-700 bg-white hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
             >
               <span className="material-icons text-sm mr-2">share</span>
               Share Results

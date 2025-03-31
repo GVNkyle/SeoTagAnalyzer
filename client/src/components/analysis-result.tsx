@@ -2,10 +2,12 @@ import React from 'react';
 import { SeoAnalysisResult } from '@shared/schema';
 import ScoreDisplay from './score-display';
 import ScoreBreakdown from './score-breakdown';
+import SeoSummary from './seo-summary';
 import PreviewSection from './preview-section';
 import RecommendationsSection from './recommendations-section';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 
 interface AnalysisResultProps {
@@ -109,17 +111,23 @@ const AnalysisResult: React.FC<AnalysisResultProps> = ({ result }) => {
           </div>
           
           <div className="flex-shrink-0 w-full sm:w-auto">
-            <button 
-              type="button"
+            <Button 
+              variant="outline"
               onClick={handleShareResults}
-              className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-neutral-300 shadow-sm text-sm font-medium rounded-md text-neutral-700 bg-white hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              className="w-full sm:w-auto"
             >
               <span className="material-icons text-sm mr-2">share</span>
               Share Results
-            </button>
+            </Button>
           </div>
         </CardContent>
       </Card>
+
+      <SeoSummary 
+        metaTags={result.metaTags}
+        socialMedia={result.socialMedia}
+        technicalSeo={result.technicalSeo}
+      />
 
       <ScoreBreakdown 
         metaTags={result.metaTags}

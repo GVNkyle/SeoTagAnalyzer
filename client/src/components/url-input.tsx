@@ -87,7 +87,7 @@ const UrlInput: React.FC<UrlInputProps> = ({ onAnalyze, isLoading, error }) => {
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   onFocus={handleFocus}
-                  className={`pl-10 pr-12 py-5 sm:py-6 transition-all ${showError ? 'border-red-500 focus:ring-red-500' : ''}`}
+                  className={`pl-10 pr-12 h-10 transition-all ${showError ? 'border-red-500 focus:ring-red-500' : ''}`}
                   placeholder="example.com or https://example.com"
                   autoComplete="url"
                   autoCorrect="off"
@@ -118,8 +118,8 @@ const UrlInput: React.FC<UrlInputProps> = ({ onAnalyze, isLoading, error }) => {
               <Button
                 type="submit"
                 disabled={isLoading || !url.trim() || (inputTouched && !isValidUrl)}
-                className="w-full sm:w-auto px-5 sm:px-6 py-5 sm:py-6 h-auto"
-                size="lg"
+                className="w-full sm:w-auto px-4 py-2 h-10"
+                size="default"
               >
                 {isLoading ? (
                   <span className="flex items-center justify-center">
@@ -131,7 +131,7 @@ const UrlInput: React.FC<UrlInputProps> = ({ onAnalyze, isLoading, error }) => {
                   </span>
                 ) : (
                   <span className="flex items-center">
-                    <span className="material-icons mr-1 text-lg">search</span>
+                    <span className="material-icons mr-1 text-sm">search</span>
                     Analyze
                   </span>
                 )}

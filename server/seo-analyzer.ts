@@ -27,44 +27,64 @@ export async function fetchWebsite(url: string): Promise<string> {
     // Basic URL validation
     new URL(url);
     
+    // Handle known sites that block scraping
+    const domain = new URL(url).hostname.toLowerCase();
+    if (domain.includes('facebook.com') || 
+        domain.includes('instagram.com') || 
+        domain.includes('twitter.com') ||
+        domain.includes('x.com')) {
+      throw new Error(`Unable to analyze ${domain}. This website blocks external requests. Please try a different URL.`);
+    }
+    
     // Attempt to fetch with timeout and proper headers
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 seconds timeout
     
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5',
-      },
-      signal: controller.signal,
-    });
-    
-    clearTimeout(timeoutId);
-    
-    if (!response.ok) {
-      throw new Error(`Failed to fetch website: ${response.status} ${response.statusText}`);
+    try {
+      const response = await fetch(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+          'Accept-Language': 'en-US,en;q=0.5',
+        },
+        signal: controller.signal,
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        if (response.status === 403) {
+          throw new Error(`Access forbidden: The website ${domain} doesn't allow external requests.`);
+        } else if (response.status === 404) {
+          throw new Error(`Page not found: The URL ${url} doesn't exist.`);
+        } else {
+          throw new Error(`Failed to fetch website: ${response.status} ${response.statusText}`);
+        }
+      }
+      
+      const html = await response.text();
+      
+      // Check if we actually got HTML content
+      if (!html || html.trim().length === 0) {
+        throw new Error('Received empty response from website');
+      }
+      
+      return html;
+    } catch (fetchErr) {
+      clearTimeout(timeoutId);
+      throw fetchErr;
     }
-    
-    const html = await response.text();
-    
-    // Check if we actually got HTML content
-    if (!html || html.trim().length === 0) {
-      throw new Error('Received empty response from website');
-    }
-    
-    return html;
   } catch (error) {
     console.error('Error fetching website:', error);
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
-        throw new Error('Request timeout: Website took too long to respond');
-      } else if (error.message.includes('Failed to fetch')) {
-        throw new Error(`Connection error: Unable to access the website. Please check the URL and try again`);
+        throw new Error('Request timeout: The website took too long to respond. Please try again later.');
+      } else if (error.message.includes('Failed to fetch') || error.message.includes('fetch failed')) {
+        throw new Error(`Connection error: Unable to access the website. Check the URL and your internet connection.`);
       } else if (error instanceof TypeError && error.message.includes('URL')) {
-        throw new Error(`Invalid URL format: ${url}`);
+        throw new Error(`Invalid URL format: ${url}. Please enter a valid website address.`);
       }
-      throw new Error(`Error fetching website: ${error.message}`);
+      throw error; // Pass through custom errors we've already formatted
     }
     throw new Error('Unknown error occurred while fetching the website');
   }

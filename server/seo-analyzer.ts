@@ -79,8 +79,11 @@ export async function fetchWebsite(url: string): Promise<string> {
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
         throw new Error('Request timeout: The website took too long to respond. Please try again later.');
-      } else if (error.message.includes('Failed to fetch') || error.message.includes('fetch failed')) {
-        throw new Error(`Connection error: Unable to access the website. Check the URL and your internet connection.`);
+      } else if (error.message.includes('Failed to fetch') || 
+          error.message.includes('fetch failed') || 
+          error.message.includes('unable to verify') || 
+          error.message.includes('certificate')) {
+        throw new Error(`Connection error: Unable to access the website. This could be due to a secure connection issue or the site may be blocking requests.`);
       } else if (error instanceof TypeError && error.message.includes('URL')) {
         throw new Error(`Invalid URL format: ${url}. Please enter a valid website address.`);
       }

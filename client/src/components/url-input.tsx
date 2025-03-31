@@ -138,9 +138,16 @@ const UrlInput: React.FC<UrlInputProps> = ({ onAnalyze, isLoading, error }) => {
               </Button>
             </div>
           </form>
-          <p className="text-sm text-neutral-500 mt-4">
-            Enter any website URL to analyze its SEO metadata, get a score, and see recommendations for improvement
-          </p>
+          <div className="text-sm text-neutral-500 mt-4">
+            <p className="mb-2">
+              Enter any website URL to analyze its SEO metadata, get a score, and see recommendations for improvement
+            </p>
+            <p className="text-xs">
+              <span className="font-medium">Try these examples:</span> example.com, mozilla.org, wikipedia.org
+              <br />
+              <span className="text-amber-600">Note:</span> Some websites like Facebook or Twitter block external requests and cannot be analyzed.
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>

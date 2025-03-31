@@ -40,7 +40,7 @@ export type SeoAnalysis = typeof seoAnalyses.$inferSelect;
 
 // Schema for SEO analysis result
 export const seoAnalysisResultSchema = z.object({
-  url: z.string().url(),
+  url: z.string(), // Removed .url() validation since we store domains, not full URLs
   analyzedAt: z.string(),
   totalScore: z.number().min(0).max(100),
   scoreRating: z.enum(['Poor', 'Fair', 'Good', 'Excellent']),
